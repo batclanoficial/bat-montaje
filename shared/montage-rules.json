@@ -1,0 +1,6 @@
+{
+  "eventTypes": ["KILL", "CLUTCH", "COMBATE", "OTRO"],
+  "defaultBeforeSeconds": 7,
+  "defaultAfterSeconds": 3,
+  "mergeGapMilliseconds": 350
+}

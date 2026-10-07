@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">BAT Montaje</string>
+    <string name="backend_url">https://script.google.com/macros/s/AKfycbxnE-NeLYmbDMQ6nlImFPiIPWN1ShH2N-4J2xmigeuowqwCs4F7W9XV-gjTL-W-zAjQ/exec</string>
+</resources>

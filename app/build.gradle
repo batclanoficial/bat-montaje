@@ -1,0 +1,28 @@
+plugins {
+    id 'com.android.application'
+}
+
+android {
+    namespace 'com.batclan.montaje'
+    compileSdk 36
+
+    defaultConfig {
+        applicationId 'com.batclan.montaje'
+        minSdk 23
+        targetSdk 35
+        versionCode 4
+        versionName '1.3-beta'
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+}
+
+dependencies {
+    def media3Version = '1.11.1'
+    implementation "androidx.media3:media3-exoplayer:$media3Version"
+    implementation "androidx.media3:media3-ui:$media3Version"
+    implementation "androidx.media3:media3-transformer:$media3Version"
+}

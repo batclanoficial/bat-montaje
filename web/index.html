@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="theme-color" content="#09090d" />
+    <meta name="description" content="BAT Montaje: tus mejores momentos de Rainbow Six Mobile." />
+    <link rel="manifest" href="/bat-montaje/manifest.webmanifest" />
+    <link rel="icon" type="image/png" href="/bat-montaje/icons/icon-192.png" />
+    <link rel="apple-touch-icon" href="/bat-montaje/icons/icon-192.png" />
+    <title>BAT Montaje</title>
+  </head>
+  <body>
+    <div id="app">
+      <header class="brand">
+        <img src="/bat-montaje/icons/icon-192.png" alt="Logo BAT" width="56" height="56" />
+        <div><div class="brand-name">BAT <span>MONTAJE</span></div><div class="brand-sub">CLAN BAT · TUS MEJORES MOMENTOS</div></div>
+      </header>
+
+      <main>
+        <div id="updateBanner" class="banner hidden" role="status">Nueva versión disponible <button id="updateButton" type="button">ACTUALIZAR</button></div>
+        <div id="notice" class="notice hidden" role="status"></div>
+
+        <nav class="top-actions" aria-label="Secciones">
+          <button id="accountButton" type="button" class="ghost">CUENTA BAT</button>
+          <button id="historyButton" type="button" class="ghost">HISTORIAL</button>
+          <button id="installButton" type="button" class="ghost hidden">INSTALAR BAT</button>
+        </nav>
+
+        <section id="accountPage" class="page hidden">
+          <button id="backFromAccount" type="button" class="back">← VOLVER AL EDITOR</button>
+          <section class="card"><div class="section-heading"><span class="accent">●</span><h1>Cuenta BAT</h1></div>
+            <p id="accountMessage" class="subtle" role="status"></p>
+            <div id="accountContent"></div>
+          </section>
+        </section>
+
+        <section id="editorPage" class="page">
+          <section class="card">
+            <div class="section-heading"><span class="accent">▰</span><h1>Video fuente</h1></div>
+            <p id="sourceName" class="subtle">Ningún video seleccionado. Selecciona un video para comenzar.</p>
+            <label class="button secondary file-picker">SELECCIONAR VIDEO<input id="videoFile" type="file" accept="video/*,.mp4,.mov,.m4v,.webm" /></label>
+          </section>
+
+          <section class="card">
+            <div class="section-heading"><span class="accent">◷</span><h2>Ajustes de clips</h2></div>
+            <p class="subtle">Se aplican a los eventos nuevos. Puedes cambiar cada evento después.</p>
+            <div class="two-cols">
+              <label>Antes <input id="defaultBefore" type="number" min="0" max="600" step="1" value="7" inputmode="numeric" /></label>
+              <label>Después <input id="defaultAfter" type="number" min="0" max="600" step="1" value="3" inputmode="numeric" /></label>
+            </div>
+            <button id="applyMargins" type="button" class="quiet">APLICAR A TODOS</button>
+          </section>
+
+          <section class="card">
+            <div class="section-heading"><span class="accent">⊕</span><h2>Añadir evento</h2></div>
+            <div class="form-grid">
+              <label>Tipo<select id="eventType"><option>KILL</option><option>CLUTCH</option><option>COMBATE</option><option>OTRO</option></select></label>
+              <label>Tiempo de inicio<input id="eventTime" type="text" inputmode="numeric" placeholder="0:00" autocomplete="off" /></label>
+              <label id="combatEndLabel" class="hidden">Tiempo de fin<input id="combatEnd" type="text" inputmode="numeric" placeholder="0:00" autocomplete="off" /></label>
+              <label id="customNameLabel" class="hidden">Nombre del evento<input id="customName" type="text" maxlength="40" placeholder="Ejemplo: ACE" /></label>
+            </div>
+            <p class="hint">Escribe solo números: 224 → 2:24 · 4 → 0:04 · 444444 → 44:44:44</p>
+            <button id="addEvent" type="button" class="primary">AÑADIR EVENTO</button>
+          </section>
+
+          <section class="card" id="eventsSection">
+            <div class="section-heading"><span class="accent">▣</span><h2>Eventos</h2><span id="eventCount" class="count">0</span></div>
+            <div id="eventList" class="event-list"><p class="subtle">Todavía no hay eventos.</p></div>
+          </section>
+
+          <section class="card" id="previewSection">
+            <div class="section-heading"><span class="accent">▶</span><h2>Vista previa</h2></div>
+            <div class="video-frame"><video id="preview" playsinline preload="metadata"></video></div>
+            <div class="player-controls">
+              <button id="playPause" type="button" class="icon-button" aria-label="Reproducir" disabled>▶</button>
+              <input id="seek" type="range" min="0" max="1000" value="0" aria-label="Posición del video" disabled />
+              <span id="timeDisplay" class="time">0:00 / 0:00</span>
+            </div>
+          </section>
+
+          <section class="card final-card">
+            <div class="section-heading"><span class="accent">▰</span><h2>Crear montaje</h2></div>
+            <p id="montageHint" class="subtle">Añade eventos para crear tu video.</p>
+            <div class="two-cols">
+              <button id="createLocal" type="button" class="primary" disabled>LOCAL</button>
+              <button id="uploadBat" type="button" class="secondary" disabled>SUBIR A BAT</button>
+            </div>
+            <p id="renderStatus" class="hint" role="status"></p>
+          </section>
+        </section>
+
+        <section id="historyPage" class="page hidden">
+          <button id="backFromHistory" type="button" class="back">← VOLVER AL EDITOR</button>
+          <h1>HISTORIAL</h1>
+          <section class="card"><h2>Montajes locales</h2><p class="subtle">Los 5 más recientes</p><input id="historySearch" type="search" placeholder="Buscar por nombre..." aria-label="Buscar montajes locales por nombre" /><div id="localHistory"></div></section>
+          <section class="card"><h2>Enviados a BAT</h2><p class="subtle">Los 5 más recientes</p><div id="cloudHistory"><p class="subtle">Accede a Cuenta BAT para ver tus envíos.</p></div></section>
+        </section>
+        <section id="uploadPage" class="page hidden">
+          <section class="card"><div class="section-heading"><span class="accent">↑</span><h1>Subir a BAT</h1></div>
+            <p class="subtle">Comparte tu montaje con BAT.</p>
+            <p id="uploadMessage" role="status">Preparando montaje…</p>
+            <progress id="uploadProgress" max="100" value="0"></progress>
+            <div id="uploadPercent" class="hint">0 %</div>
+            <div class="account-form">
+              <button id="resumeUpload" class="primary hidden" type="button">REINTENTAR / REANUDAR</button>
+              <button id="cancelUpload" class="quiet" type="button">CANCELAR ENVÍO</button>
+              <button id="backFromUpload" class="quiet" type="button">VOLVER AL EDITOR</button>
+            </div>
+            <p class="hint">Si se interrumpe la conexión, vuelve aquí y pulsa REANUDAR. La confirmación aparecerá cuando el video se haya enviado por completo.</p>
+          </section>
+        </section>
+      </main>
+    </div>
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>

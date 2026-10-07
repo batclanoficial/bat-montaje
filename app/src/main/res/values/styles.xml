@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="BatTheme" parent="android:style/Theme.Material.NoActionBar">
+        <item name="android:fontFamily">sans</item>
+        <item name="android:colorAccent">#F51B34</item>
+        <item name="android:windowLightStatusBar">false</item>
+        <item name="android:statusBarColor">#08090B</item>
+        <item name="android:navigationBarColor">#08090B</item>
+        <item name="android:windowBackground">#08090B</item>
+        <item name="android:alertDialogTheme">@style/BatDialog</item>
+    </style>
+    <style name="BatDialog" parent="android:style/Theme.Material.Dialog.Alert">
+        <item name="android:colorBackground">#1B1E22</item>
+        <item name="android:colorAccent">#F51B34</item>
+        <item name="android:textColorPrimary">#F7F8F9</item>
+        <item name="android:textColorSecondary">#A0A5AC</item>
+    </style>
+</resources>

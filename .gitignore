@@ -1,0 +1,16 @@
+.gradle/
+build/
+app/build/
+local.properties
+dist/
+backend/
+web/node_modules/
+web/dist/
+web/.env*
+*.keystore
+*.jks
+*.apk
+*.mp4
+*.mov
+*.log
+

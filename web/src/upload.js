@@ -63,12 +63,14 @@ export async function beginUpload(blob) {
 export const pendingUpload = () => loadPrivate(KEY);
 
 export async function abandonUpload(pending) {
+  let result = { ok: true, status: 'FAILED' };
   if (pending?.upload_id) {
-    const result = await accountRequest('cancel_upload', { upload_id: pending.upload_id });
+    result = await accountRequest('cancel_upload', { upload_id: pending.upload_id });
     if (!result.ok) throw new Error('No se pudo cancelar el envío.');
   }
   await deletePendingVideo(pending.local_id);
   await clearPrivate(KEY);
+  return result;
 }
 
 async function completePending(pending, result) {

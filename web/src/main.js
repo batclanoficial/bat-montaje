@@ -297,10 +297,13 @@ async function cancelPendingUpload() {
   state.uploadController?.abort();
   $('cancelUpload').disabled = true;
   try {
-    await abandonUpload(state.pending);
+    const result = await abandonUpload(state.pending);
     state.pending = null;
     $('resumeUpload').classList.add('hidden');
-    uploadStatus('Envío cancelado.', 0);
+    uploadStatus(result.status === 'NEW' || result.status === 'APPROVED' ||
+      result.status === 'REJECTED' || result.status === 'COMPLETED' ?
+      'El video ya se había enviado correctamente a BAT.' : 'Envío cancelado.',
+    result.status === 'FAILED' ? 0 : 100);
   } catch (error) {
     console.error('Cancelación de envío web', error);
     uploadStatus('No se pudo cancelar el envío. Inténtalo nuevamente.');

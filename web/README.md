@@ -18,7 +18,7 @@ El build incluye FFmpeg WebAssembly alojado en el mismo origen. El archivo fuent
 
 ## Cuenta BAT y envío
 
-Cuenta BAT utiliza el mismo Apps Script que Android. El despliegue v16 ofrece un puente HTML Service limitado al origen de la PWA, y permite conservar una instalación APK más una PWA vinculada mediante un código temporal generado en la APK actualizada. Se verificó una respuesta real de acceso fallido desde GitHub Pages, sin crear cuentas ni utilizar credenciales de miembros. No hay secretos oficiales en el frontend.
+Cuenta BAT utiliza el mismo Apps Script que Android. La PWA permite registrarse desde iPhone sin APK. Para acceder a una cuenta existente desde una instalación web nueva, se usa el correo y la contraseña, seguidos de un código temporal enviado al correo de esa cuenta; no se requiere Android. Puede coexistir una instalación Android con una PWA. Vincular otra PWA revoca la sesión web anterior. El puente HTML Service está limitado al origen de la PWA y no hay secretos oficiales en el frontend. La entrega del código y el acceso real en iPhone requieren una prueba con una cuenta del usuario después del despliegue.
 
 La subida utiliza una sesión temporal reanudable y guarda el video pendiente en IndexedDB. **No se ha validado todavía una subida PWA real con una cuenta aprobada**, ni la recuperación tras corte de red en móviles; la política CORS de la sesión Drive debe verificarse con una sesión válida. No presentar esa función como garantizada hasta pasar esas pruebas. Los uploads no se inician al seleccionar un video.
 

@@ -1,4 +1,4 @@
-const CACHE = 'bat-montaje-static-v3';
+const CACHE = 'bat-montaje-static-v4';
 const BASE = '/bat-montaje/';
 const ASSETS = []; // BUILD_ASSETS
 const SHELL = [BASE, `${BASE}index.html`, `${BASE}manifest.webmanifest`,

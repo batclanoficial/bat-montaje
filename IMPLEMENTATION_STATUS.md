@@ -4,7 +4,7 @@ Actualizado: 2026-10-07. Cuenta propietaria: `bat.clan.oficial@gmail.com`.
 La [hoja privada](https://docs.google.com/spreadsheets/d/1MXr85_BlpnHXOvXfpzaHGR5ieYCyfDZ5GaU9MkSv-8I/edit),
 el [Apps Script](https://script.google.com/home/projects/1y_8YvFI2N0QET2JvmOSNuOCyOxkwIttYIzpLySP1lV8T-htWUfZRFTB_/edit)
 y la [carpeta de Drive](https://drive.google.com/drive/folders/1k3xBe0APFVAGcdW2vYYvr8TUJkZcpr9O)
-ya existen. La implementación web activa es la versión 16; se conservó su URL. La versión 16 añade el puente de acceso para la PWA con origen restringido, sin publicar la hoja ni los secretos.
+ya existen. La implementación web activa es la versión 17; se conservó su URL. La versión 16 añadió el puente de acceso para la PWA con origen restringido, sin publicar la hoja ni los secretos; la versión 17 permite autorizar una instalación PWA nueva mediante un código temporal enviado al correo, sin exigir Android.
 
 | Etapa | Estado | Verificación pendiente |
 | --- | --- | --- |

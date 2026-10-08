@@ -4,6 +4,8 @@ Aplicación Android vertical e independiente del proyecto Windows, con una PWA b
 
 Ambas versiones toman tipos de evento y ajustes iniciales de `shared/montage-rules.json`. Las funciones dependientes de plataforma —reproducción, exportación, archivos y almacenamiento seguro— mantienen implementaciones propias.
 
+La PWA no exige Android: permite crear la cuenta desde iPhone y acceder a una cuenta existente con correo, contraseña y, al autorizar una instalación web nueva, un código temporal enviado a ese correo.
+
 ## Funciones
 
 - Seleccionar un vídeo desde los archivos del teléfono y verlo con audio y controles debajo de la imagen.

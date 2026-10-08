@@ -42,10 +42,11 @@ function render() {
     $('toLogin').onclick = () => { view = 'login'; render(); };
     commonLocal();
   } else if (view === 'login') {
-    content.innerHTML = `<h2>ACCEDER A MI CUENTA</h2><p class="subtle">Utiliza el correo de tu cuenta BAT.</p>
+    content.innerHTML = `<h2>ACCEDER A MI CUENTA</h2><p class="subtle">Utiliza el correo de tu cuenta BAT. Si esta instalación es nueva, te enviaremos un código por correo.</p>
       <div class="account-form">${field('loginEmail', 'Correo electrónico', 'email', 'autocomplete="email"')}
       ${field('loginPassword', 'Contraseña', 'password', 'autocomplete="current-password"')}
-      ${field('linkCode', 'Código de vinculación de BAT web (si esta instalación es nueva)', 'text', 'autocomplete="off" maxlength="19"')}
+      <div id="webCodeBlock" hidden>${field('webCode', 'Código enviado a tu correo', 'text', 'autocomplete="one-time-code" inputmode="text" maxlength="19"')}
+      <p class="subtle">El código caduca en 10 minutos y se utiliza una sola vez.</p></div>
       <button id="loginNow" class="primary" type="button">ACCEDER A MI CUENTA</button>
       <button id="forgotPassword" class="quiet" type="button">OLVIDÉ MI CONTRASEÑA</button>
       <button id="toRegister" class="quiet" type="button">CREAR CUENTA BAT</button>
@@ -127,7 +128,7 @@ async function login() {
   if (busy) return;
   const email = $('loginEmail').value.trim().toLowerCase();
   const password = $('loginPassword').value;
-  const linkCode = $('linkCode').value.trim();
+  const linkCode = $('webCode').value.trim();
   if (!email || !password) return message('Escribe tu correo y contraseña.');
   setBusy(true); message('Accediendo a tu cuenta…');
   try {
@@ -138,6 +139,12 @@ async function login() {
     const result = await batRequest({ action: 'login_web', email,
       password_key: await passwordKey(password, salt.salt, salt.iterations),
       web_link_code: linkCode, access_token: accessToken, client_kind: 'WEB', ...device });
+    if (result.verification_required) {
+      $('webCodeBlock').hidden = false;
+      message(result.message || result.error || 'Revisa tu correo para autorizar esta instalación.');
+      $('webCode').focus();
+      return;
+    }
     if (!result.ok) return message(result.error || 'Correo o contraseña incorrectos.');
     session = { mode: 'ACTIVE', email, access_token: accessToken,
       client_kind: 'WEB', ...device };

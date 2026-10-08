@@ -4,7 +4,7 @@ import { DEFAULT_AFTER, DEFAULT_BEFORE, formatTime, maskTimestamp, mergedRanges,
 import { deleteMontage, getMontage, listMontages, saveMontage } from './storage.js';
 import { renderMontage } from './render.js';
 import { accountRequest, accountSession, initializeAccount, showAccountPage } from './account.js';
-import { abandonUpload, beginUpload, continueUpload, pendingUpload } from './upload.js';
+import { abandonUpload, beginUpload, confirmPendingUpload, continueUpload, pendingUpload } from './upload.js';
 
 const $ = id => document.getElementById(id);
 const state = { file: null, fileUrl: '', durationMs: 0, events: [], rendering: false,
@@ -392,8 +392,22 @@ function setup() {
     if (accountSession()?.mode === 'ACTIVE') {
       if (state.pending) {
         showPage('upload');
-        uploadStatus('La subida fue interrumpida. Pulsa REANUDAR para continuar.');
-        $('resumeUpload').classList.remove('hidden');
+        uploadStatus('Comprobando envío pendiente…');
+        try {
+          const confirmed = await confirmPendingUpload(state.pending);
+          if (confirmed) {
+            state.pending = null;
+            uploadStatus('Video enviado correctamente a BAT.', 100);
+            $('cancelUpload').disabled = true;
+          } else {
+            uploadStatus('La subida fue interrumpida. Pulsa REANUDAR para continuar.');
+            $('resumeUpload').classList.remove('hidden');
+          }
+        } catch (error) {
+          console.error('Confirmación de envío pendiente', error);
+          uploadStatus('No se pudo comprobar el envío. Inténtalo nuevamente.');
+          $('resumeUpload').classList.remove('hidden');
+        }
       } else showPage('editor');
     }
   });

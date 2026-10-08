@@ -89,6 +89,9 @@ async function checkCompleted(pending) {
   return null;
 }
 
+/** Al reabrir BAT solo consulta el estado; nunca reanuda la transferencia automáticamente. */
+export const confirmPendingUpload = pending => checkCompleted(pending);
+
 export async function continueUpload(pending, onProgress, signal) {
   try {
     return await transferUpload(pending, onProgress, signal);

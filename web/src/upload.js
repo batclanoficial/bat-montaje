@@ -71,7 +71,51 @@ export async function abandonUpload(pending) {
   await clearPrivate(KEY);
 }
 
+async function completePending(pending, result) {
+  await deletePendingVideo(pending.local_id);
+  await clearPrivate(KEY);
+  return result;
+}
+
+async function checkCompleted(pending) {
+  if (!pending.upload_id) return null;
+  const result = await accountRequest('check_upload', { upload_id: pending.upload_id });
+  if (!result.ok) throw new Error(result.error || 'BAT no pudo comprobar el envío.');
+  if (result.status === 'NEW' || result.status === 'APPROVED' ||
+      result.status === 'REJECTED' || result.status === 'COMPLETED') {
+    return completePending(pending, result);
+  }
+  if (result.status !== 'UPLOADING') throw new Error('Este envío ya no está activo.');
+  return null;
+}
+
 export async function continueUpload(pending, onProgress, signal) {
+  try {
+    return await transferUpload(pending, onProgress, signal);
+  } catch (error) {
+    if (error.name === 'AbortError' || !pending.upload_id) throw error;
+    // El último PUT puede llegar completo aunque el navegador no pueda leer su respuesta.
+    // Comprobar en BAT antes de presentar error o iniciar otra transferencia.
+    for (let attempt = 0; attempt < 4; attempt++) {
+      if (attempt) await pause(attempt - 1, signal);
+      try {
+        const completed = await checkCompleted(pending);
+        if (completed) {
+          onProgress(pending.file_size, pending.file_size);
+          return completed;
+        }
+      } catch (checkError) {
+        if (checkError.name === 'AbortError') throw checkError;
+        console.warn('Confirmación de envío pendiente', checkError);
+      }
+    }
+    throw error;
+  }
+}
+
+async function transferUpload(pending, onProgress, signal) {
+  const alreadyCompleted = await checkCompleted(pending);
+  if (alreadyCompleted) return alreadyCompleted;
   const blob = await loadPendingVideo(pending.local_id);
   if (!blob) throw new Error('El video pendiente ya no está disponible.');
   if (!pending.upload_id || !pending.session_uri) {
@@ -84,8 +128,7 @@ export async function continueUpload(pending, onProgress, signal) {
       if (!reservation.ok) throw new Error(reservation.error || 'No se pudo reanudar el envío.');
     }
     if (reservation.status === 'NEW') {
-      await deletePendingVideo(pending.local_id); await clearPrivate(KEY);
-      return reservation;
+      return completePending(pending, reservation);
     }
     pending.upload_id = reservation.upload_id;
     pending.session_uri = assertSessionUri(reservation.session_uri || '');
@@ -111,8 +154,7 @@ export async function continueUpload(pending, onProgress, signal) {
         { upload_id: pending.upload_id, drive_file_id: id }) :
         await accountRequest('renew_upload', { upload_id: pending.upload_id });
       if (done.ok && done.status === 'NEW') {
-        await deletePendingVideo(pending.local_id); await clearPrivate(KEY);
-        return done;
+        return completePending(pending, done);
       }
       throw new Error('BAT no pudo confirmar el envío.');
     }
@@ -123,8 +165,7 @@ export async function continueUpload(pending, onProgress, signal) {
       const fresh = await accountRequest('renew_upload', { upload_id: pending.upload_id });
       if (!fresh.ok) throw new Error(fresh.error || 'No se pudo reanudar el envío.');
       if (fresh.status === 'NEW') {
-        await deletePendingVideo(pending.local_id); await clearPrivate(KEY);
-        return fresh;
+        return completePending(pending, fresh);
       }
       pending.session_uri = assertSessionUri(fresh.session_uri);
       await savePrivate(KEY, pending);
@@ -150,7 +191,7 @@ export async function continueUpload(pending, onProgress, signal) {
         const done = await accountRequest('finish_upload',
           { upload_id: pending.upload_id, drive_file_id: id });
         if (!done.ok || done.status !== 'NEW') throw new Error('BAT no pudo confirmar el envío.');
-        await deletePendingVideo(pending.local_id); await clearPrivate(KEY);
+        await completePending(pending, done);
         onProgress(blob.size, blob.size);
         return done;
       }

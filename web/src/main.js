@@ -255,14 +255,17 @@ async function runPendingUpload() {
   refreshButtons();
   try {
     await continueUpload(state.pending, (sent, total) =>
-      uploadStatus('Subiendo video a BAT…', sent / total * 100), state.uploadController.signal);
+      uploadStatus(sent >= total ? 'Confirmando envío con BAT…' : 'Subiendo video a BAT…',
+        sent / total * 100), state.uploadController.signal);
     state.pending = null;
     uploadStatus('Video enviado correctamente a BAT.', 100);
     $('cancelUpload').disabled = true;
   } catch (error) {
     console.error('Subida web interrumpida', error);
     if (!state.cancelling) {
-      uploadStatus('La subida fue interrumpida. Puedes reanudarla.');
+      uploadStatus($('uploadProgress').value >= 100 ?
+        'BAT aún no confirma el envío. Reintenta para comprobarlo sin volver a crear el video.' :
+        'La subida fue interrumpida. Puedes reanudarla.');
       $('resumeUpload').classList.remove('hidden');
     }
   } finally {

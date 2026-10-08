@@ -2,6 +2,8 @@
 
 Aplicación Android vertical e independiente del proyecto Windows, con una PWA beta en el mismo árbol de fuentes. Conserva el logo y los colores BAT, y está completamente en español. No incluye detección automática. La APK actual es Java nativo; la interfaz todavía no es código compartido con la PWA. Consulta [PWA_ARCHITECTURE.md](PWA_ARCHITECTURE.md) para el plan de migración incremental y las diferencias reales entre plataformas.
 
+Ambas versiones toman tipos de evento y ajustes iniciales de `shared/montage-rules.json`. Las funciones dependientes de plataforma —reproducción, exportación, archivos y almacenamiento seguro— mantienen implementaciones propias.
+
 ## Funciones
 
 - Seleccionar un vídeo desde los archivos del teléfono y verlo con audio y controles debajo de la imagen.

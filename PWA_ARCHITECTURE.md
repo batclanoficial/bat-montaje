@@ -14,7 +14,7 @@ La cuenta permitirá una instalación Android y **una** PWA vinculada, no un dis
 
 ## Fuente única y excepciones
 
-El objetivo final es que editor, eventos, historial y cuenta utilicen componentes web compartidos dentro de la APK (WebView) y la PWA. Mientras se migra, la APK conserva sus pantallas nativas y la PWA se implementa en `web/`. Las reglas que se extraigan a `shared/` deben verificarse mediante pruebas de paridad. Esto es una transición; no debe afirmarse que la interfaz Java existente ya sea compartida.
+El objetivo final es que editor, eventos, historial y cuenta utilicen componentes web compartidos dentro de la APK (WebView) y la PWA. Mientras se migra, la APK conserva sus pantallas nativas y la PWA se implementa en `web/`. Ambas versiones leen `shared/montage-rules.json` para los tipos de evento, márgenes iniciales y distancia de fusión. La APK incluye ese archivo como asset y la PWA lo incorpora en el build. Añadir un tipo de momento estándar en ese JSON lo hace aparecer en ambas interfaces tras recompilarlas; los tipos especiales que necesitan campos propios, como COMBATE y OTRO, siguen requiriendo lógica de interfaz. Los algoritmos de exportación y las pantallas aún son distintos; esto es una transición, no una interfaz completamente compartida.
 
 ## Riesgos que requieren validación real
 
@@ -25,8 +25,8 @@ El objetivo final es que editor, eventos, historial y cuenta utilicen componente
 
 ## Pruebas de referencia ya pasadas
 
-- `gradlew.bat assembleDebug --no-daemon`
+- `gradlew.bat assembleDebug` (asset compartido confirmado dentro del APK)
 - `node backend/tests/backend.test.cjs`
 - `tests/MontageLogicTest.java` con JDK 17
 
-El repositorio público `batclanoficial/bat` queda fuera de alcance. Si se publica este proyecto, excluir `backend/`, APKs, videos de prueba y configuraciones locales mediante `.gitignore`/auditoría de secretos. El workflow de GitHub Pages construirá solamente `web/` con base `/bat-montaje/`.
+El repositorio público `batclanoficial/bat` queda fuera de alcance. `batclanoficial/bat-montaje` excluye `backend/`, APKs, videos de prueba y configuraciones locales mediante `.gitignore`/auditoría de secretos. El workflow de GitHub Pages construye solamente `web/` con base `/bat-montaje/`.

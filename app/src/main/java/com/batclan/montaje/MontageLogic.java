@@ -91,6 +91,10 @@ public final class MontageLogic {
     }
 
     public static List<Range> mergedRanges(List<Event> events, long durationMs) {
+        return mergedRanges(events, durationMs, MERGE_GAP_MS);
+    }
+
+    public static List<Range> mergedRanges(List<Event> events, long durationMs, long mergeGapMs) {
         List<Range> ranges = new ArrayList<>();
         for (Event event : events) {
             if (event.timeMs < 0 || event.timeMs > durationMs) continue;
@@ -104,7 +108,7 @@ public final class MontageLogic {
         ranges.sort(Comparator.comparingLong(range -> range.startMs));
         List<Range> merged = new ArrayList<>();
         for (Range range : ranges) {
-            if (merged.isEmpty() || range.startMs > merged.get(merged.size() - 1).endMs + MERGE_GAP_MS) {
+            if (merged.isEmpty() || range.startMs > merged.get(merged.size() - 1).endMs + Math.max(0, mergeGapMs)) {
                 merged.add(range);
             } else {
                 Range last = merged.get(merged.size() - 1);

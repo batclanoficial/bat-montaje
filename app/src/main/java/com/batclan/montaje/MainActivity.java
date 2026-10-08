@@ -68,8 +68,6 @@ public final class MainActivity extends Activity {
     private static final int BORDER = Color.rgb(49, 53, 58);
     private static final int WHITE = Color.rgb(247, 248, 249);
     private static final int MUTED = Color.rgb(160, 165, 172);
-    private static final String[] TYPES = {"KILL", "CLUTCH", "COMBATE", "OTRO"};
-
     private final ArrayList<MontageLogic.Event> events = new ArrayList<>();
     private final Handler handler = new Handler(Looper.getMainLooper());
     private Uri sourceUri;
@@ -80,7 +78,9 @@ public final class MainActivity extends Activity {
     private File tempOutput;
     private boolean exporting;
     private boolean uploadAfterExport;
-    private String newEventType = TYPES[0];
+    private SharedMontageRules rules;
+    private String[] eventTypes;
+    private String newEventType;
     private TextView fileLabel;
     private TextView durationLabel;
     private TextView eventCount;
@@ -129,6 +129,9 @@ public final class MainActivity extends Activity {
         getWindow().setStatusBarColor(BG);
         getWindow().setNavigationBarColor(BG);
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
+        rules = SharedMontageRules.load(this);
+        eventTypes = rules.eventTypes;
+        newEventType = eventTypes[0];
         buildUi();
         renderEvents();
         try {
@@ -284,10 +287,10 @@ public final class MainActivity extends Activity {
         LinearLayout settingsRow = row();
         settingsRow.setGravity(Gravity.CENTER_VERTICAL);
         topMargin(settingsCard, settingsRow, 12);
-        LinearLayout beforeBox = inputBlock("SEGUNDOS ANTES", "7");
+        LinearLayout beforeBox = inputBlock("SEGUNDOS ANTES", String.valueOf(rules.defaultBeforeSeconds));
         beforeInput = (EditText) beforeBox.getChildAt(1);
         settingsRow.addView(beforeBox, new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1));
-        LinearLayout afterBox = inputBlock("SEGUNDOS DESPUÉS", "3");
+        LinearLayout afterBox = inputBlock("SEGUNDOS DESPUÉS", String.valueOf(rules.defaultAfterSeconds));
         afterInput = (EditText) afterBox.getChildAt(1);
         LinearLayout.LayoutParams afterLp = new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1);
         afterLp.leftMargin = dp(12);
@@ -439,7 +442,7 @@ public final class MainActivity extends Activity {
         timestampInput.setText("");
         endTimestampInput.setText("");
         customNameInput.setText("");
-        newEventType = TYPES[0];
+        newEventType = eventTypes[0];
         renderTypeChooser();
         updateEventForm();
         fileLabel.setText(displayName(uri));
@@ -504,12 +507,12 @@ public final class MainActivity extends Activity {
 
     private void renderTypeChooser() {
         typeChooser.removeAllViews();
-        for (int rowIndex = 0; rowIndex < 2; rowIndex++) {
+        for (int rowIndex = 0; rowIndex < (eventTypes.length + 1) / 2; rowIndex++) {
             LinearLayout typeRow = row();
             if (rowIndex > 0) topMargin(typeChooser, typeRow, 7);
             else typeChooser.addView(typeRow);
-            for (int columnIndex = 0; columnIndex < 2; columnIndex++) {
-                String type = TYPES[rowIndex * 2 + columnIndex];
+            for (int columnIndex = 0; columnIndex < 2 && rowIndex * 2 + columnIndex < eventTypes.length; columnIndex++) {
+                String type = eventTypes[rowIndex * 2 + columnIndex];
                 boolean selected = type.equals(newEventType);
                 TextView chip = label(type, 12, selected ? WHITE : MUTED, true);
                 chip.setGravity(Gravity.CENTER);
@@ -682,7 +685,7 @@ public final class MainActivity extends Activity {
             });
         }
         if (exportSummary != null) {
-            List<MontageLogic.Range> ranges = MontageLogic.mergedRanges(events, Math.max(0, durationMs));
+            List<MontageLogic.Range> ranges = MontageLogic.mergedRanges(events, Math.max(0, durationMs), rules.mergeGapMilliseconds);
             long total = 0;
             for (MontageLogic.Range range : ranges) total += range.endMs - range.startMs;
             exportSummary.setText(events.isEmpty() ? "Añade eventos para crear tu video." :
@@ -695,7 +698,7 @@ public final class MainActivity extends Activity {
 
     private boolean hasValidMontage() {
         return sourceUri != null && durationMs > 0 && !events.isEmpty() &&
-                !MontageLogic.mergedRanges(events, durationMs).isEmpty();
+                !MontageLogic.mergedRanges(events, durationMs, rules.mergeGapMilliseconds).isEmpty();
     }
 
     private void updateActionButtons() {
@@ -722,14 +725,14 @@ public final class MainActivity extends Activity {
         topMargin(body, timeInput, 6, dp(48));
         body.addView(label("TIPO", 11, MUTED, true));
         RadioGroup types = new RadioGroup(this);
-        for (int i = 0; i < TYPES.length; i++) {
+        for (int i = 0; i < eventTypes.length; i++) {
             RadioButton option = new RadioButton(this);
             option.setId(100 + i);
-            option.setText(TYPES[i]);
+            option.setText(eventTypes[i]);
             option.setTextColor(WHITE);
             option.setButtonTintList(android.content.res.ColorStateList.valueOf(RED));
             types.addView(option);
-            if (TYPES[i].equals(event.type)) types.check(option.getId());
+            if (eventTypes[i].equals(event.type)) types.check(option.getId());
         }
         body.addView(types);
         LinearLayout endBlock = column();
@@ -744,7 +747,7 @@ public final class MainActivity extends Activity {
         customInput.setHint("Por ejemplo, ACE");
         topMargin(customBlock, customInput, 6, dp(48));
         types.setOnCheckedChangeListener((group, checkedId) -> {
-            String selected = TYPES[Math.max(0, Math.min(TYPES.length - 1, checkedId - 100))];
+            String selected = eventTypes[Math.max(0, Math.min(eventTypes.length - 1, checkedId - 100))];
             boolean combat = "COMBATE".equals(selected);
             timeLabel.setText(combat ? "INICIO DEL COMBATE" : "TIEMPO");
             endBlock.setVisibility(combat ? View.VISIBLE : View.GONE);
@@ -773,7 +776,7 @@ public final class MainActivity extends Activity {
             long time = MontageLogic.parseTimestamp(timeInput.getText().toString());
             if (time < 0 || time > durationMs) { alert("La hora debe ser válida y estar dentro del vídeo."); return; }
             int checked = types.getCheckedRadioButtonId() - 100;
-            String selected = checked >= 0 && checked < TYPES.length ? TYPES[checked] : TYPES[0];
+            String selected = checked >= 0 && checked < eventTypes.length ? eventTypes[checked] : eventTypes[0];
             long end = time;
             if ("COMBATE".equals(selected)) {
                 end = MontageLogic.parseTimestamp(endInput.getText().toString());
@@ -849,7 +852,7 @@ public final class MainActivity extends Activity {
     private void startExport(boolean toBat) {
         if (exporting) return;
         if (sourceUri == null || durationMs <= 0 || events.isEmpty()) { alert("Selecciona un vídeo y añade al menos un evento."); return; }
-        List<MontageLogic.Range> ranges = MontageLogic.mergedRanges(events, durationMs);
+        List<MontageLogic.Range> ranges = MontageLogic.mergedRanges(events, durationMs, rules.mergeGapMilliseconds);
         if (ranges.isEmpty()) { alert("No hay segmentos válidos para exportar."); return; }
         try {
             uploadAfterExport = toBat;

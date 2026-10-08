@@ -10,8 +10,8 @@ android {
         applicationId 'com.batclan.montaje'
         minSdk 23
         targetSdk 35
-        versionCode 4
-        versionName '1.3-beta'
+        versionCode 5
+        versionName '1.4-beta'
     }
 
     compileOptions {

@@ -75,10 +75,14 @@ export async function continueUpload(pending, onProgress, signal) {
   const blob = await loadPendingVideo(pending.local_id);
   if (!blob) throw new Error('El video pendiente ya no está disponible.');
   if (!pending.upload_id || !pending.session_uri) {
-    const reservation = await accountRequest('start_upload', {
+    let reservation = await accountRequest('start_upload', {
       client_request_id: pending.client_request_id, file_size: blob.size
     });
     if (!reservation.ok) throw new Error(reservation.error || 'No se pudo iniciar el envío.');
+    if (reservation.needs_renew) {
+      reservation = await accountRequest('renew_upload', { upload_id: reservation.upload_id });
+      if (!reservation.ok) throw new Error(reservation.error || 'No se pudo reanudar el envío.');
+    }
     if (reservation.status === 'NEW') {
       await deletePendingVideo(pending.local_id); await clearPrivate(KEY);
       return reservation;

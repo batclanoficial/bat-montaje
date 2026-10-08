@@ -8,7 +8,7 @@ El frontend estático de GitHub Pages **no puede reutilizar directamente** el re
 
 ## Backend web y vinculación
 
-Apps Script `ContentService` responde con redirección y no ofrece los encabezados CORS necesarios para que la PWA de GitHub Pages lea respuestas a sus POST JSON. No debe usarse `no-cors`, JSONP ni colocar credenciales oficiales en el navegador. Hace falta un puente web autenticado y comprobado antes de habilitar Cuenta BAT o Subir a BAT en PWA. La propuesta dentro del backend actual es una página HTML Service que se comunique de forma restringida con la PWA mediante `postMessage`, con origen exacto, nonce por solicitud y validación server-side. Debe probarse en Android Chrome y Safari/iOS antes del despliegue público.
+Apps Script `ContentService` responde con redirección y no ofrece los encabezados CORS necesarios para que la PWA de GitHub Pages lea respuestas a sus POST JSON. No se usa `no-cors`, JSONP ni credenciales oficiales en el navegador. El backend v16 incorpora una página HTML Service que se comunica con la PWA mediante `postMessage`, con origen exacto, nonce por solicitud y validación server-side. Desde el sitio público se verificó la respuesta esperada al intentar acceder con una cuenta inexistente. El login de una cuenta aprobada y el envío todavía requieren pruebas de extremo a extremo en teléfonos.
 
 La cuenta permitirá una instalación Android y **una** PWA vinculada, no un dispositivo ilimitado. La APK autenticada emitirá un código de vinculación aleatorio, breve y de un solo uso; la PWA lo presentará junto con las credenciales para asociar una instalación web generada aleatoriamente. El backend guardará hashes, validará rol/estado/cuota y permitirá a futuro desvincularla sin modificar la cuenta. No se usará fingerprinting.
 
@@ -21,7 +21,7 @@ El objetivo final es que editor, eventos, historial y cuenta utilicen componente
 - FFmpeg WebAssembly consume bastante memoria y puede no exportar videos largos en móviles con poca RAM. El exportador nativo Media3 se mantiene en Android.
 - iOS/Safari no ofrece todas las APIs de Chrome Android; instalación, almacenamiento y exportación deben probarse en dispositivo real.
 - El almacenamiento web es gestionado por el navegador y no ofrece la misma persistencia que un archivo guardado por Storage Access Framework. Se ofrecerá descarga local y se solicitará persistencia cuando exista.
-- El endpoint Apps Script y la sesión resumable de Drive requieren pruebas de CORS reales desde el origen de GitHub Pages. Hasta pasar esas pruebas, no se debe mostrar una subida PWA como operativa.
+- El puente de Apps Script respondió desde GitHub Pages, pero la sesión resumable de Drive requiere una prueba CORS con una sesión válida y una cuenta aprobada. Hasta pasarla, la subida PWA es beta y no debe describirse como validada.
 
 ## Pruebas de referencia ya pasadas
 

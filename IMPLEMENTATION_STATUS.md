@@ -1,15 +1,15 @@
 # Estado de ampliación BAT Montaje APK
 
-Actualizado: 2026-10-05. Cuenta propietaria: `bat.clan.oficial@gmail.com`.
+Actualizado: 2026-10-07. Cuenta propietaria: `bat.clan.oficial@gmail.com`.
 La [hoja privada](https://docs.google.com/spreadsheets/d/1MXr85_BlpnHXOvXfpzaHGR5ieYCyfDZ5GaU9MkSv-8I/edit),
 el [Apps Script](https://script.google.com/home/projects/1y_8YvFI2N0QET2JvmOSNuOCyOxkwIttYIzpLySP1lV8T-htWUfZRFTB_/edit)
 y la [carpeta de Drive](https://drive.google.com/drive/folders/1k3xBe0APFVAGcdW2vYYvr8TUJkZcpr9O)
-ya existen. La implementación web activa es la versión 15; se conservó su URL.
+ya existen. La implementación web activa es la versión 16; se conservó su URL. La versión 16 añade el puente de acceso para la PWA con origen restringido, sin publicar la hoja ni los secretos.
 
 | Etapa | Estado | Verificación pendiente |
 | --- | --- | --- |
 | A: inspección | Hecha; editor local y arquitectura preservados | Ninguna del inventario. |
-| B: Sheet/Apps Script | Hoja privada y backend real configurados; versión 15 asigna el menor ID libre desde 1 y envía correo BAT renovado | Vigilar futuras publicaciones. |
+| B: Sheet/Apps Script | Hoja privada y backend real configurados; versión 16 mantiene la asignación del menor ID libre desde 1 y el correo BAT renovado | Vigilar futuras publicaciones. |
 | C: registro/email | Verificado con registro sintético, email recibido y estado PENDIENTE | Comprobar entrega con buzones de administradores reales. |
 | D: aprobación/ID | Aprobación y rechazo reales comprobados; ID 11 asignado en prueba y liberado | Probar aprobaciones concurrentes reales. |
 | E: sesión/validación | Activación y validación reales comprobadas; token revocado al cerrar prueba | Probar en teléfono físico y recuperación sin conexión. |

@@ -1,7 +1,8 @@
-const CACHE = 'bat-montaje-static-v2';
+const CACHE = 'bat-montaje-static-v3';
 const BASE = '/bat-montaje/';
+const ASSETS = []; // BUILD_ASSETS
 const SHELL = [BASE, `${BASE}index.html`, `${BASE}manifest.webmanifest`,
-  `${BASE}icons/icon-192.png`, `${BASE}icons/icon-512.png`];
+  `${BASE}icons/icon-192.png`, `${BASE}icons/icon-512.png`, ...ASSETS];
 
 self.addEventListener('install', event => {
   event.waitUntil(caches.open(CACHE).then(cache => cache.addAll(SHELL)));

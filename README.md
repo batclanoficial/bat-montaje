@@ -1,6 +1,6 @@
-# BAT Montaje para Android
+# BAT Montaje para Android y PWA
 
-Aplicación Android vertical e independiente del proyecto Windows. Conserva el logo y los colores BAT, y está completamente en español. No incluye detección automática.
+Aplicación Android vertical e independiente del proyecto Windows, con una PWA beta en el mismo árbol de fuentes. Conserva el logo y los colores BAT, y está completamente en español. No incluye detección automática. La APK actual es Java nativo; la interfaz todavía no es código compartido con la PWA. Consulta [PWA_ARCHITECTURE.md](PWA_ARCHITECTURE.md) para el plan de migración incremental y las diferencias reales entre plataformas.
 
 ## Funciones
 
@@ -16,7 +16,7 @@ El teléfono no necesita Python, FFmpeg, FFprobe, Tesseract ni VLC. La reproducc
 ## Ampliación de cuenta y nube beta
 
 La APK beta añade registro, validación de cuenta, historial local/nube y
-subidas resumables a Drive sin credenciales de Google en el cliente. El
+subidas resumables sin credenciales de Google en el cliente. El
 servidor oficial y las carpetas privadas ya están configurados. Registro,
 correo, aprobación, rechazo y cambios de estado/límite se probaron con Google
 real. Una subida resumable de un MP4 sintético pequeño llegó a Drive y se
@@ -36,7 +36,7 @@ publicación automática ni el futuro BAT Official Preset.
 ## Instalación
 
 El archivo `dist/BAT Montaje.apk` conserva la versión local distribuida
-anteriormente. La compilación actual está en `dist/BAT Montaje - nube beta v1.3.apk`
+anteriormente. La compilación actual está en `dist/BAT Montaje - APK + PWA beta v1.4.apk`
 y `app/build/outputs/apk/debug/app-debug.apk`. Todas usan la misma clave de depuración
 de Android. Pueden instalarse manualmente en Android 6.0 (API 23) o posterior,
 pero para publicación y actualizaciones mantenibles hace falta una clave de
@@ -51,6 +51,8 @@ Requiere Android Studio/SDK con plataforma Android 36 y un JDK compatible con el
 ```
 
 Salida de Gradle: `app/build/outputs/apk/debug/app-debug.apk`.
+
+La PWA se construye desde `web/` con `pnpm install`, `pnpm test` y `pnpm build`. El workflow de GitHub Pages publica automáticamente `web/dist` al actualizar `main` en [batclanoficial/bat-montaje](https://github.com/batclanoficial/bat-montaje). URL: [BAT Montaje PWA](https://batclanoficial.github.io/bat-montaje/). El repositorio `batclanoficial/bat` no se utiliza para esta aplicación.
 
 Para comprobar las reglas de tiempos y fusión de clips sin Android:
 
